@@ -65,7 +65,8 @@ import {
     }
   `;
   
-  const Product = ({ item }) => {
+  const Product = ({item}) => {
+  
     return (
       <Container>
         <Circle />
