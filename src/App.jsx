@@ -5,9 +5,11 @@ import Product from './pages/Product'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Cart from './pages/Cart'
+
 import { BrowserRouter as Router,Switch,Route,Redirect} from "react-router-dom";
 import { useSelector } from 'react-redux'
 import Success from './pages/Success'
+import Cartrzp from './pages/Cartrzp'
 
 const App = () => {
   const user = useSelector(state=>state.user.currentUser)
@@ -24,7 +26,7 @@ const App = () => {
           <Product />
         </Route>
         <Route path="/cart">
-          <Cart />
+          <Cartrzp />
         </Route>
         <Route path="/success">
           <Success />

@@ -6,13 +6,12 @@ import { userRequest } from "../axios";
 const Success = () => {
   const location = useLocation();
   //in Cart.jsx I sent data and cart. Please check that page for the changes.(in video it's only data)
-  const data = location.state.stripeData;
+  const data = location.state.res;
   //const cart = location.state.cart;
   const currentUser = useSelector((state) => state.user.currentUser);
   const cart = useSelector((state) => state.cart);
   const [orderId, setOrderId] = useState(null);
-  console.log("user:",cart)  
-
+ 
   useEffect(() => {
     const createOrder = async () => {
       try {
@@ -23,13 +22,13 @@ const Success = () => {
             quantity: item._quantity,
           })),
           amount: cart.total,
-          address: data.billing_details.address,
+           address: "AMAL SABU"
         });
         setOrderId(res.data._id);
       } catch {}
     };
-    data && createOrder();
-  }, [cart, data, currentUser]);
+    createOrder();
+  }, []);
 
   return (
     <div
