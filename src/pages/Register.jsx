@@ -1,6 +1,9 @@
+
 import styled from "styled-components";
 import { mobile } from "../responsive";
-
+import { useRef } from 'react';
+import {useHistory} from 'react-router-dom'
+import { publicRequest } from "../axios";
 
 const Container = styled.div`
   width: 100vw;
@@ -57,17 +60,42 @@ const Button = styled.button`
 `;
 
 const Register = () => {
+
+  const username = useRef();
+  const email = useRef();
+  const password = useRef();
+  const passwordAgain = useRef();
+  const history = useHistory()
+
+  const handleClick = async (e) => {
+    e.preventDefault()
+    if(passwordAgain.current.value !== password.current.value){
+        passwordAgain.current.setCustomValidity("passwords don't match")
+    } else {
+        const user = {
+            username: username.current.value,
+            email: email.current.value,
+            password: password.current.value,
+        }
+        try{
+            await publicRequest.post("/auth/register", user)
+            history.push("/login")
+        }catch(err){
+            console.log(err)
+        }
+    }
+    
+}
+
   return (
     <Container>
       <Wrapper>
         <Title>CREATE AN ACCOUNT</Title>
-        <Form>
-          <Input placeholder="name" />
-          <Input placeholder="last name" />
-          <Input placeholder="username" />
-          <Input placeholder="email" />
-          <Input placeholder="password" />
-          <Input placeholder="confirm password" />
+        <Form onSubmit={handleClick}> 
+          <Input placeholder="username" required ref={username} />
+          <Input placeholder="email" required ref={email} />
+          <Input placeholder="password" type="password" required ref={password} />
+          <Input placeholder="confirm password"  type="password" required ref={passwordAgain}/>
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
