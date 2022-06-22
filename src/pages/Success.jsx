@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { userRequest } from "../axios";
+import {useHistory} from 'react-router-dom'
 
 const Success = () => {
   const location = useLocation();
-  //in Cart.jsx I sent data and cart. Please check that page for the changes.(in video it's only data)
-  const data = location.state.res;
-  //const cart = location.state.cart;
+  
+
   const currentUser = useSelector((state) => state.user.currentUser);
   const cart = useSelector((state) => state.cart);
   const [orderId, setOrderId] = useState(null);
+  const history = useHistory()
  
   useEffect(() => {
     const createOrder = async () => {
@@ -43,7 +44,8 @@ const Success = () => {
       {orderId
         ? `Order has been created successfully. Your order number is ${orderId}`
         : `Successfull. Your order is being prepared...`}
-      <button style={{ padding: 10, marginTop: 20 }}>Go to Homepage</button>
+      <button onClick={()=>history.push("/")} style={{ padding: 10, marginTop: 20 }}>Go to Homepage</button>
+      <button style={{ padding: 10, marginTop: 20 }}>Go to Orders</button>
     </div>
   );
 };

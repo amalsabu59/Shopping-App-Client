@@ -1,4 +1,5 @@
 export const sliderItems = [
+  //https://img.faballey.com/images/banner/1526bae3-040a-4b1a-a5e4-184aab70ba86.jpg
     {
       id: 1,
       img: "https://i.ibb.co/kBN9wc0/pngeggcioppypp.png",
@@ -30,16 +31,17 @@ export const sliderItems = [
   ];
 
   export const categories = [
+    //https://images.pexels.com/photos/2983464/pexels-photo-2983464.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940
     {
       id: 1,
       img: "https://images.pexels.com/photos/5886041/pexels-photo-5886041.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      title: "SHIRT STYLE!",
+      title: "WOMEN STYLE!",
       cat:"women"
     },
     {
       id: 2,
-      img: "https://images.pexels.com/photos/2983464/pexels-photo-2983464.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      title: "LOUNGEWEAR LOVE",
+      img: "https://i.pinimg.com/564x/85/a2/88/85a28822fe04a2ded3f3751f73a14579.jpg",
+      title: "MEN STYLE",
       cat:"men"
     },
     {
