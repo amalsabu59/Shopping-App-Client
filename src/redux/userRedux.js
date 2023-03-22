@@ -1,32 +1,42 @@
-import { createSlice } from  "@reduxjs/toolkit"
-
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { publicRequest } from "../axios";
+export const login = createAsyncThunk(`/auth/login`, async (user) => {
+  const response = await publicRequest.post("/auth/login", user);
+  return response.data;
+});
 const userSlice = createSlice({
-    name:"user",
-    initialState:{
-        currentUser: null,
-        isFetching: false,
-        error:false
+  name: "user",
+  initialState: {
+    currentUser: null,
+    isFetching: false,
+    error: false,
+    message: "",
+  },
+  reducers: {
+    logout(state, action) {
+      // state.currentUser = null;
     },
-    reducers: {
-        loginStart: (state) => {
-          state.isFetching=true
-        },
-        loginSuccess: (state,action) => {
-          state.isFetching=false;
-          state.currentUser= action.payload
+  },
+  extraReducers: {
+    [login.pending]: (state, action) => {
+      state.isFetching = true;
+      state.error = false;
+      state.message = "";
+    },
+    [login.fulfilled]: (state, { payload }) => {
+      state.isFetching = false;
+      state.error = false;
+      state.currentUser = payload;
+    },
+    [login.rejected]: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.message = "wrong credentials";
+    },
+  },
+});
 
-        },
-        loginFailure: (state,action) => {
-          state.isFetching=false;
-          state.error= false
-        },
-        logout(state,action){
-          state.currentUser=null;
-      
-          
-        }
-      },
-    });
+export const userActions = userSlice.actions;
+export default userSlice;
 
-export const {loginStart,loginSuccess,loginFailure, logout} = userSlice.actions;
-export default userSlice.reducer;
+export const { logout } = userSlice.actions;
