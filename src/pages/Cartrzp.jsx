@@ -4,12 +4,13 @@ import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { mobile } from "../responsive";
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import { useEffect, useState } from "react";
 import { userRequest } from "../axios";
 import { useHistory } from "react-router-dom";
 import { useCallback } from "react";
 import useRazorpay from "react-razorpay";
+import {clearCart} from '../redux/cartRedux'
 
 
 const KEY = process.env.REACT_APP_STRIPE;
@@ -167,7 +168,7 @@ const Button = styled.button`
 const Cartrzp = () => {
   const cart = useSelector(state=>state.cart)
   const history = useHistory()
-
+  const dispatch = useDispatch()
   const Razorpay = useRazorpay();
 
  
@@ -188,6 +189,7 @@ const Cartrzp = () => {
           history.push("/success", {
             rzpData: res,
             products: cart, });
+            dispatch(clearCart())
 				} catch (error) {
 					console.log(error);
 				}
@@ -211,9 +213,11 @@ const Cartrzp = () => {
   
 	const handlePayment = async () => {
 		try {
+      
 			const orderUrl = "payment/orders";
 			const { data } = await userRequest.post(orderUrl,{amount:cart.total});
 			initPayment(data.data);
+      
 		} catch (error) {
 			console.log(error);
 		}

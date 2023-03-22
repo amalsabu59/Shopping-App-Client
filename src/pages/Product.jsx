@@ -1,25 +1,23 @@
-import { Add, Remove } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { Add, Remove } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { publicRequest } from '../axios';
+import { publicRequest } from "../axios";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 // import Products from '../components/Products';
-import { addProduct } from '../redux/cartRedux';
-import { mobile } from '../responsive';
-
-
+import { addProduct } from "../redux/cartRedux";
+import { mobile } from "../responsive";
 
 const Container = styled.div``;
 
 const Wrapper = styled.div`
   padding: 50px;
   display: flex;
-  ${mobile({ padding: "10px",flexDirection: "column"  })}
+  ${mobile({ padding: "10px", flexDirection: "column" })}
 `;
 
 const ImgContainer = styled.div`
@@ -31,14 +29,12 @@ const Image = styled.img`
   height: 90vh;
   object-fit: cover;
   ${mobile({ height: "40vh" })}
-
 `;
 
 const InfoContainer = styled.div`
   flex: 1;
   padding: 0px 50px;
   ${mobile({ padding: "10px" })}
-
 `;
 
 const Title = styled.h1`
@@ -60,7 +56,6 @@ const FilterContainer = styled.div`
   display: flex;
   justify-content: space-between;
   ${mobile({ width: "100%" })}
-
 `;
 
 const Filter = styled.div`
@@ -95,7 +90,6 @@ const AddContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   ${mobile({ width: "100%" })}
-
 `;
 
 const AmountContainer = styled.div`
@@ -121,75 +115,67 @@ const Button = styled.button`
   background-color: white;
   cursor: pointer;
   font-weight: 500;
-  &:hover{
-      background-color: #f8f4f4;
+  &:hover {
+    background-color: #f8f4f4;
   }
 `;
 
 const Product = () => {
-  const location = useLocation()
-  const id = location.pathname.split("/")[2]
-  const [product, setProduct] = useState({})
-  const [quantity, setQuantity] = useState(1)
-  const [color, setColor] = useState("")
-  const [size, setSize] = useState("")
-  const dispach = useDispatch()
-
-
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
+  const [product, setProduct] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+  const dispach = useDispatch();
 
   useEffect(() => {
-    const getProduct = async ()=>{
-      const res =await publicRequest.get("products/find/"+id)
-      setProduct(res.data)
+    console.log("first");
+    const getProduct = async () => {
+      const res = await publicRequest.get("products/find/" + id);
+      setProduct(res.data);
+    };
+    getProduct();
+  }, [id]);
+  console.log(product.image);
+  const handleQuantity = (type) => {
+    if (type === "dec") {
+      quantity > 1 && setQuantity(quantity - 1);
+    } else {
+      setQuantity(quantity + 1);
     }
-    getProduct()
-  }, [id])
-  
-  
-  const handleQuantity =  (type) => {
-    if (type === "dec"){
-     quantity>1 && setQuantity(quantity-1)
-    }else {
-      setQuantity(quantity+1)
-    }
-  }
+  };
 
-  const handleClick = ()=> {
-    dispach(
-      addProduct({...product,quantity,color,size})
-    )
-
-
-  }
+  const handleClick = () => {
+    dispach(addProduct({ ...product, quantity, color, size }));
+  };
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-  
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <Container>
       <Navbar />
       <Announcement />
       <Wrapper>
         <ImgContainer>
-          <Image src={product.img} />
+          <Image src={product.image} />
         </ImgContainer>
         <InfoContainer>
           <Title>{product.title}</Title>
-          <Desc>
-         {product.desc}
-          </Desc>
+          <Desc>{product.desc}</Desc>
           <Price>{product.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
               {product.color?.map((c) => (
-                <FilterColor color={c} key={c} onClick={()=>setColor(c)}/>
+                <FilterColor color={c} key={c} onClick={() => setColor(c)} />
               ))}
             </Filter>
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize onChange={(e)=>setSize(e.target.value)}>
-              {product.size?.map((s) => (
+              <FilterSize onChange={(e) => setSize(e.target.value)}>
+                {product.size?.map((s) => (
                   <FilterSizeOption key={s}>{s}</FilterSizeOption>
                 ))}
               </FilterSize>
@@ -197,9 +183,9 @@ const Product = () => {
           </FilterContainer>
           <AddContainer>
             <AmountContainer>
-              <Remove onClick={()=>handleQuantity("dec")}/>
+              <Remove onClick={() => handleQuantity("dec")} />
               <Amount>{quantity}</Amount>
-              <Add onClick={()=>handleQuantity("inc")}/>
+              <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
             <Button onClick={handleClick}>ADD TO CART</Button>
           </AddContainer>
