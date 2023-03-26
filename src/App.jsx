@@ -17,38 +17,21 @@ import {
 import { useSelector } from "react-redux";
 import Success from "./pages/Success";
 import Cartrzp from "./pages/Cartrzp";
+import useCart from "./Hooks/useCart";
+import { getCart } from "./redux/cartRedux";
 
 const App = () => {
-  const user = useSelector((state) => state.user.currentUser);
-
-  const dispach = useDispatch();
-  const timeout = 5000;
-  const [remaining, setRemaining] = useState(timeout);
-  const [lastActive, setLastActive] = useState(+new Date());
-  const [isIdle, setIsIdle] = useState(false);
-
-  const handleOnActive = () => setIsIdle(false);
-  const handleOnIdle = () => setIsIdle(true);
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout,
-    onActive: handleOnActive,
-    onIdle: handleOnIdle,
-  });
+  const dispatch = useDispatch();
+  const userId = useSelector((state) => state.user?.currentUser?._id);
+  const cartProducts = useSelector((state) => state.cart?.products);
+  const apiCallRequired = useSelector((state) => state.cart?.apiCallRequired);
 
   useEffect(() => {
-    setRemaining(getRemainingTime());
-    setLastActive(getLastActiveTime());
-    setInterval(() => {
-      setRemaining(getRemainingTime());
-    }, 100000);
+    console.log("get request useEffect");
+    dispatch(getCart(userId));
   }, []);
+  const updateCart = useCart(cartProducts, dispatch, userId, apiCallRequired);
 
-  useEffect(() => {
-    if (remaining === 0) {
-      dispach(logout({ currentUser: null }));
-    }
-  }, [remaining]);
   return (
     <Router>
       <Switch>
@@ -60,6 +43,7 @@ const App = () => {
         </Route>
         <Route path="/product/:id">
           <Product />
+          ``
         </Route>
         <Route path="/cart">
           <Cartrzp />
@@ -67,9 +51,9 @@ const App = () => {
         <Route path="/success">
           <Success />
         </Route>
-        <Route path="/login">{user ? <Redirect to="/" /> : <Login />}</Route>
+        <Route path="/login">{userId ? <Redirect to="/" /> : <Login />}</Route>
         <Route path="/register">
-          {user ? <Redirect to="/" /> : <Register />}
+          {userId ? <Redirect to="/" /> : <Register />}
         </Route>
       </Switch>
     </Router>

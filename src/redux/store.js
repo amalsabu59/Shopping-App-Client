@@ -15,19 +15,21 @@ import {
 import storage from "redux-persist/lib/storage";
 import userSlice from "./userRedux";
 
-const persistConfig = {
-  key: "root",
-  version: 1,
-  storage,
-};
-
 const rootReducer = combineReducers({
   user: userSlice.reducer,
   cart: cartReducer,
   payment: paymentSlice.reducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(
+  {
+    key: "root",
+    version: 1,
+    storage,
+    whitelist: ["user"],
+  },
+  rootReducer
+);
 
 export const store = configureStore({
   reducer: persistedReducer,

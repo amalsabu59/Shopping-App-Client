@@ -1,25 +1,22 @@
-
 import { Add, Remove } from "@mui/icons-material";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { mobile } from "../responsive";
-import { useSelector } from 'react-redux';
-import StripeCheckout from 'react-stripe-checkout'
+import { useSelector } from "react-redux";
+import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../axios";
 import { useHistory } from "react-router-dom";
 
 const KEY = process.env.REACT_APP_STRIPE;
 
-
 const Container = styled.div``;
 
 const Wrapper = styled.div`
   padding: 20px;
   ${mobile({ padding: "10px" })}
-  
 `;
 
 const Title = styled.h1`
@@ -45,7 +42,7 @@ const TopButton = styled.button`
 `;
 
 const TopTexts = styled.div`
- ${mobile({ display: "none" })}
+  ${mobile({ display: "none" })}
 `;
 const TopText = styled.span`
   text-decoration: underline;
@@ -57,7 +54,6 @@ const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
   ${mobile({ flexDirection: "column" })}
-  
 `;
 
 const Info = styled.div`
@@ -68,7 +64,6 @@ const Product = styled.div`
   display: flex;
   justify-content: space-between;
   ${mobile({ flexDirection: "column" })}
-
 `;
 
 const ProductDetail = styled.div`
@@ -118,14 +113,12 @@ const ProductAmount = styled.div`
   font-size: 24px;
   margin: 5px;
   ${mobile({ margin: "5px 15px" })}
-
 `;
 
 const ProductPrice = styled.div`
   font-size: 30px;
   font-weight: 200;
   ${mobile({ marginBottom: "20px" })}
-
 `;
 
 const Hr = styled.hr`
@@ -167,14 +160,14 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
-  const cart = useSelector(state=>state.cart)
+  const cart = useSelector((state) => state.cart);
 
-  const history = useHistory()
+  const history = useHistory();
 
-  const [stripeToken, setStripeToken] = useState(null)
+  const [stripeToken, setStripeToken] = useState(null);
 
-  const onToken =(token)=>{
-    setStripeToken(token)
+  const onToken = (token) => {
+    setStripeToken(token);
   };
 
   useEffect(() => {
@@ -186,12 +179,13 @@ const Cart = () => {
         });
         history.push("/success", {
           stripeData: res.data,
-          products: cart, });
+          products: cart,
+        });
       } catch {}
     };
     stripeToken && makeRequest();
   }, [stripeToken, cart.total, history]);
-  
+
   return (
     <Container>
       <Navbar />
@@ -208,35 +202,36 @@ const Cart = () => {
         </Top>
         <Bottom>
           <Info>
-           {cart.products.map(product=>( 
-           <Product>
-              <ProductDetail>
-                <Image src={product.img} />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> {product.title}
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> {product._id}
-                  </ProductId>
-                  <ProductColor color={product.color}/>
-                  <ProductSize>
-                    <b>Size:</b> {product.size}
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Add />
-                  <ProductAmount>{product.quantity}</ProductAmount>
-                  <Remove />
-                </ProductAmountContainer>
-                <ProductPrice>₹ {product.price*product.quantity}</ProductPrice>
-              </PriceDetail>
-            </Product>
+            {cart.products.map((product) => (
+              <Product>
+                <ProductDetail>
+                  <Image src={product.img} />
+                  <Details>
+                    <ProductName>
+                      <b>Product:</b> {product.title}
+                    </ProductName>
+                    <ProductId>
+                      <b>ID:</b> {product._id}
+                    </ProductId>
+                    <ProductColor color={product.color} />
+                    <ProductSize>
+                      <b>Size:</b> {product.size}
+                    </ProductSize>
+                  </Details>
+                </ProductDetail>
+                <PriceDetail>
+                  <ProductAmountContainer>
+                    <Add />
+                    <ProductAmount>{product.quantity}</ProductAmount>
+                    <Remove />
+                  </ProductAmountContainer>
+                  <ProductPrice>
+                    ₹ {product.price * product.quantity}
+                  </ProductPrice>
+                </PriceDetail>
+              </Product>
             ))}
             <Hr />
-            
           </Info>
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
@@ -258,7 +253,6 @@ const Cart = () => {
             </SummaryItem>
             <StripeCheckout
               name="Lama Shop"
-             
               billingAddress
               shippingAddress
               description={`Your total is ${cart.total}`}
@@ -266,7 +260,7 @@ const Cart = () => {
               token={onToken}
               stripeKey={KEY}
             >
-            <Button>CHECKOUT NOW</Button>
+              <Button>CHECKOUT NOW</Button>
             </StripeCheckout>
           </Summary>
         </Bottom>

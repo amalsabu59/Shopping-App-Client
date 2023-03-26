@@ -4,24 +4,22 @@ import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { mobile } from "../responsive";
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { userRequest } from "../axios";
 import { useHistory } from "react-router-dom";
 import { useCallback } from "react";
 import useRazorpay from "react-razorpay";
-import {clearCart} from '../redux/cartRedux'
-
+import { clearCart } from "../redux/cartRedux";
+import AddressCheckout from "../components/AddressCheckout";
 
 const KEY = process.env.REACT_APP_STRIPE;
-
 
 const Container = styled.div``;
 
 const Wrapper = styled.div`
   padding: 20px;
   ${mobile({ padding: "10px" })}
-  
 `;
 
 const Title = styled.h1`
@@ -47,7 +45,7 @@ const TopButton = styled.button`
 `;
 
 const TopTexts = styled.div`
- ${mobile({ display: "none" })}
+  ${mobile({ display: "none" })}
 `;
 const TopText = styled.span`
   text-decoration: underline;
@@ -59,7 +57,6 @@ const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
   ${mobile({ flexDirection: "column" })}
-  
 `;
 
 const Info = styled.div`
@@ -166,15 +163,17 @@ const Button = styled.button`
 `;
 
 const Cartrzp = () => {
-  const cart = useSelector(state=>state.cart)
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const cart = useSelector((state) => state.cart);
+  const [isAddressAvailable, setIsAddressAvailable] = useState(false);
+  const [showAddressSection, setShowAddressSection] = useState(false);
+
+  const history = useHistory();
+  const dispatch = useDispatch();
   const Razorpay = useRazorpay();
 
- 
-	const initPayment = (data) => {
-    console.log(data)
-    const options  = {
+  const initPayment = (data) => {
+    console.log(data);
+    const options = {
       key: "rzp_test_tzVe1pYw5EjEfd",
       amount: data.amount,
       currency: "INR",
@@ -184,15 +183,15 @@ const Cartrzp = () => {
       order_id: data.id,
       handler: async (res) => {
         try {
-				
-					const { data } = await userRequest.post("payment/verify", res);
+          const { data } = await userRequest.post("payment/verify", res);
           history.push("/success", {
             rzpData: res,
-            products: cart, });
-            dispatch(clearCart())
-				} catch (error) {
-					console.log(error);
-				}
+            products: cart,
+          });
+          dispatch(clearCart());
+        } catch (error) {
+          console.log(error);
+        }
       },
       prefill: {
         name: "Piyush Garg",
@@ -209,20 +208,23 @@ const Cartrzp = () => {
 
     const rzpay = new Razorpay(options);
     rzpay.open();
-  }
-  
-	const handlePayment = async () => {
-		try {
-      
-			const orderUrl = "payment/orders";
-			const { data } = await userRequest.post(orderUrl,{amount:cart.total});
-			initPayment(data.data);
-      
-		} catch (error) {
-			console.log(error);
-		}
-	};
+  };
 
+  const handleOrder = async () => {
+    if (isAddressAvailable) {
+      try {
+        const orderUrl = "payment/orders";
+        const { data } = await userRequest.post(orderUrl, {
+          amount: cart.total,
+        });
+        initPayment(data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setShowAddressSection(true);
+    }
+  };
 
   return (
     <Container>
@@ -236,39 +238,47 @@ const Cartrzp = () => {
             <TopText>Shopping Bag(2)</TopText>
             <TopText>Your Wishlist (0)</TopText>
           </TopTexts>
-          <TopButton type="filled">CHECKOUT NOW</TopButton>
+          {/* <TopButton type="filled">CHECKOUT NOW</TopButton> */}
         </Top>
         <Bottom>
           <Info>
-           {cart.products.map(product=>( 
-           <Product>
-              <ProductDetail>
-                <Image src={product.img} />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> {product.title}
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> {product._id}
-                  </ProductId>
-                  <ProductColor color={product.color}/>
-                  <ProductSize>
-                    <b>Size:</b> {product.size}
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Add />
-                  <ProductAmount>{product.quantity}</ProductAmount>
-                  <Remove />
-                </ProductAmountContainer>
-                <ProductPrice>₹ {product.price*product.quantity}</ProductPrice>
-              </PriceDetail>
-            </Product>
-            ))}
+            {showAddressSection ? (
+              <AddressCheckout
+                setIsAddressAvailable={setIsAddressAvailable}
+                setShowAddressSection={setShowAddressSection}
+              />
+            ) : (
+              cart.products.map((product) => (
+                <Product>
+                  <ProductDetail>
+                    <Image src={product?.image} />
+                    <Details>
+                      <ProductName>
+                        <b>Product:</b> {product.title}
+                      </ProductName>
+                      <ProductId>
+                        <b>ID:</b> {product._id}
+                      </ProductId>
+                      <ProductColor color={product.color} />
+                      <ProductSize>
+                        <b>Size:</b> {product.size}
+                      </ProductSize>
+                    </Details>
+                  </ProductDetail>
+                  <PriceDetail>
+                    <ProductAmountContainer>
+                      <Add />
+                      <ProductAmount>{product.quantity}</ProductAmount>
+                      <Remove />
+                    </ProductAmountContainer>
+                    <ProductPrice>
+                      ₹ {product.price * product.quantity}
+                    </ProductPrice>
+                  </PriceDetail>
+                </Product>
+              ))
+            )}
             <Hr />
-            
           </Info>
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
@@ -288,8 +298,11 @@ const Cartrzp = () => {
               <SummaryItemText>Total</SummaryItemText>
               <SummaryItemPrice>₹ {cart.total}</SummaryItemPrice>
             </SummaryItem>
-            <Button onClick={handlePayment}>CHECKOUT NOW</Button>
-          
+            {!showAddressSection && (
+              <Button onClick={handleOrder}>
+                {isAddressAvailable ? " CHECKOUT NOW" : "ORDER NOW"}
+              </Button>
+            )}
           </Summary>
         </Bottom>
       </Wrapper>

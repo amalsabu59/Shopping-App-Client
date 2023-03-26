@@ -127,7 +127,7 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
-  const dispach = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log("first");
@@ -137,7 +137,7 @@ const Product = () => {
     };
     getProduct();
   }, [id]);
-  console.log(product.image);
+
   const handleQuantity = (type) => {
     if (type === "dec") {
       quantity > 1 && setQuantity(quantity - 1);
@@ -146,9 +146,10 @@ const Product = () => {
     }
   };
 
-  const handleClick = () => {
-    dispach(addProduct({ ...product, quantity, color, size }));
+  const handleAddToCart = () => {
+    dispatch(addProduct({ ...product, quantity, color, size }));
   };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -187,7 +188,7 @@ const Product = () => {
               <Amount>{quantity}</Amount>
               <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
-            <Button onClick={handleClick}>ADD TO CART</Button>
+            <Button onClick={handleAddToCart}>ADD TO CART</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>

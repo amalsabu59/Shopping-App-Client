@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { publicRequest } from "../axios";
+
 export const login = createAsyncThunk(`/auth/login`, async (user) => {
   const response = await publicRequest.post("/auth/login", user);
   return response.data;
